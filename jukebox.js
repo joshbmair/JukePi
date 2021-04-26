@@ -7,8 +7,8 @@ const APIController = (function() {
         const result = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             headers: {
-                'Content-Type' : 'application/x-www-form-urlencoded', 
-                'Authorization' : 'Basic ' + btoa(clientId + ':' + clientSecret)
+                'Content-Type': 'application/x-www-form-urlencoded', 
+                'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)
             },
             body: 'grant_type=client_credentials'
         });
@@ -16,23 +16,46 @@ const APIController = (function() {
         const data = await result.json();
         return data.access_token;
     }
+
+    // Authorize scopes of player
+    const _authPlayer = async () => {
+        console.log('In authPlayer');
+
+        // Authorize reading playback state
+        await fetch('https://accounts.spotify.com/authorize', {
+            method: 'POST',
+            body: JSON.stringify({
+                client_id: clientId,
+                response_type: 'code',
+                // TODO: Change this to 'http://localhost'
+                redirect_uri: 'C:/Users/Josh/OneDrive/Documents/School/CS%20370/JukePi/index.html',
+                scope: 'user-read-playback-state'
+            })
+        });
+
+        // Authorize modifying playback state
+        // TODO
+
+        console.log('Read playback authorized.\n');
+        return true;
+    }
     
     const _getGenres = async (token) => {
         const result = await fetch(`https://api.spotify.com/v1/browse/categories?locale=sv_US`, {
             method: 'GET',
-            headers: { 'Authorization' : 'Bearer ' + token }
+            headers: { 'Authorization': 'Bearer ' + token }
         });
 
         const data = await result.json();
         return data.categories.items;
     }
 
-    const _getPlaylistByGenre = async (token, genreId) => {
-        const limit = 10;
+    const _getPlaylist = async (token, genreId) => {
+        const limit = 25; // TODO: Remove limit feature
         
         const result = await fetch(`https://api.spotify.com/v1/browse/categories/${genreId}/playlists?limit=${limit}`, {
             method: 'GET',
-            headers: { 'Authorization' : 'Bearer ' + token }
+            headers: { 'Authorization': 'Bearer ' + token }
         });
 
         const data = await result.json();
@@ -44,17 +67,17 @@ const APIController = (function() {
 
         const result = await fetch(`${tracksEndPoint}?limit=${limit}`, {
             method: 'GET',
-            headers: { 'Authorization' : 'Bearer ' + token }
+            headers: { 'Authorization': 'Bearer ' + token }
         });
 
         const data = await result.json();
         return data.items;
     }
 
-    const _getTrack = async (token, trackEndPoint) => {
-        const result = await fetch(`${trackEndPoint}`, {
+    const _getTrack = async (token, trackId) => {
+        const result = await fetch(`${trackId}`, {
             method: 'GET',
-            headers: { 'Authorization' : 'Bearer ' + token}
+            headers: { 'Authorization': 'Bearer ' + token}
         });
 
         const data = await result.json();
@@ -65,17 +88,20 @@ const APIController = (function() {
         getToken() {
             return _getToken();
         },
+        authPlayer() {
+            return _authPlayer();
+        },
         getGenres(token) {
             return _getGenres(token);
         },
-        getPlaylistByGenre(token, genreId) {
-            return _getPlaylistByGenre(token, genreId);
+        getPlaylist(token, genreId) {
+            return _getPlaylist(token, genreId);
         },
         getTracks(token, tracksEndPoint) {
             return _getTracks(token, tracksEndPoint);
         },
-        getTrack(token, trackEndPoint) {
-            return _getTrack(token, trackEndPoint);
+        getTrack(token, trackId) {
+            return _getTrack(token, trackId);
         }
     }
 })();
@@ -108,19 +134,19 @@ const UIController = (function() {
 
         // Create select list option
         createGenre(text, value) {
-            const html = `<option value="${value}">${text}</option>`;
-            document.querySelector(DOMElements.selectGenre).insertAdjacentHTML('beforeend', html);
+            const genre = `<option value="${value}">${text}</option>`;
+            document.querySelector(DOMElements.selectGenre).insertAdjacentHTML('beforeend', genre);
         }, 
 
         createPlaylist(text, value) {
-            const html = `<option value="${value}">${text}</option>`;
-            document.querySelector(DOMElements.selectPlaylist).insertAdjacentHTML('beforeend', html);
+            const playlist = `<option value="${value}">${text}</option>`;
+            document.querySelector(DOMElements.selectPlaylist).insertAdjacentHTML('beforeend', playlist);
         },
 
         // Need method to create a track list group item 
         createTrack(id, name) {
-            const html = `<a href="#" class="list-group-item list-group-item-action list-group-item-light" id="${id}">${name}</a>`;
-            document.querySelector(DOMElements.divSonglist).insertAdjacentHTML('beforeend', html);
+            const track = `<a href="#" class="list-group-item list-group-item-action list-group-item-light" id="${id}">${name}</a>`;
+            document.querySelector(DOMElements.divSonglist).insertAdjacentHTML('beforeend', track);
         },
 
         // Need method to create the song detail
@@ -129,7 +155,7 @@ const UIController = (function() {
             // Any time user clicks a new song, we need to clear out the song detail div
             detailDiv.innerHTML = '';
 
-            const html = 
+            const detail = 
             `
             <div class="row col-sm-12 px-0">
                 <img src="${img}" alt="">        
@@ -142,7 +168,7 @@ const UIController = (function() {
             </div> 
             `;
 
-            detailDiv.insertAdjacentHTML('beforeend', html)
+            detailDiv.insertAdjacentHTML('beforeend', detail)
         },
 
         resetTrackDetail() {
@@ -199,13 +225,13 @@ const APPController = (function(UICtrl, APICtrl) {
         // Get the genre id associated with the selected genre
         const genreId = genreSelect.options[genreSelect.selectedIndex].value;             
         // Ge the playlist based on a genre
-        const playlist = await APICtrl.getPlaylistByGenre(token, genreId);       
-        // Create a playlist list item for every playlist returned
+        const playlist = await APICtrl.getPlaylist(token, genreId);       
+        // Create a playlist item for every playlist returned
         playlist.forEach(p => UICtrl.createPlaylist(p.name, p.tracks.href));
     });
      
 
-    // create submit button click event listener
+    // Create submit button click event listener
     DOMInputs.submit.addEventListener('click', async (e) => {
         // Prevent page reset
         e.preventDefault();
@@ -232,16 +258,16 @@ const APPController = (function(UICtrl, APICtrl) {
         // Get the token
         const token = UICtrl.getStoredToken().token;
         // Get the track endpoint
-        const trackEndpoint = e.target.id;
+        const trackId = e.target.id;
         // Get the track object
-        const track = await APICtrl.getTrack(token, trackEndpoint);
+        const track = await APICtrl.getTrack(token, trackId);
         // Load the track details
         UICtrl.createTrackDetail(track.album.images[2].url, track.name, track.artists[0].name);
     });    
 
     return {
         init() {
-            console.log('App is starting');
+            console.log('Starting JukePi');
             loadGenres();
         }
     }
