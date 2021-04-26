@@ -195,21 +195,20 @@ const UIController = (function() {
             }
         }
     }
-
 })();
 
-const APPController = (function(UICtrl, APICtrl) {
+const AppController = (function(UICtrlr, APICtrlr) {
     // Get input field object ref
     const DOMInputs = UICtrl.inputField();
 
     // Get genres on page load
     const loadGenres = async () => {
         // Get the token
-        const token = await APICtrl.getToken();           
+        const token = await APICtrlr.getToken();           
         // Store the token onto the page
         UICtrl.storeToken(token);
         // Set the genres
-        const genres = await APICtrl.getGenres(token);
+        const genres = await APICtrlr.getGenres(token);
         // Populate our genres select element
         genres.forEach(element => UICtrl.createGenre(element.name, element.id));
     }
@@ -225,7 +224,7 @@ const APPController = (function(UICtrl, APICtrl) {
         // Get the genre id associated with the selected genre
         const genreId = genreSelect.options[genreSelect.selectedIndex].value;             
         // Ge the playlist based on a genre
-        const playlist = await APICtrl.getPlaylist(token, genreId);       
+        const playlist = await APICtrlr.getPlaylist(token, genreId);       
         // Create a playlist item for every playlist returned
         playlist.forEach(p => UICtrl.createPlaylist(p.name, p.tracks.href));
     });
@@ -244,10 +243,9 @@ const APPController = (function(UICtrl, APICtrl) {
         // Get track endpoint based on the selected playlist
         const tracksEndPoint = playlistSelect.options[playlistSelect.selectedIndex].value;
         // Get the list of tracks
-        const tracks = await APICtrl.getTracks(token, tracksEndPoint);
+        const tracks = await APICtrlr.getTracks(token, tracksEndPoint);
         // Create a track list item
         tracks.forEach(el => UICtrl.createTrack(el.track.href, el.track.name))
-        
     });
 
     // Create song selection click event listener
@@ -260,7 +258,7 @@ const APPController = (function(UICtrl, APICtrl) {
         // Get the track endpoint
         const trackId = e.target.id;
         // Get the track object
-        const track = await APICtrl.getTrack(token, trackId);
+        const track = await APICtrlr.getTrack(token, trackId);
         // Load the track details
         UICtrl.createTrackDetail(track.album.images[2].url, track.name, track.artists[0].name);
     });    
@@ -271,7 +269,6 @@ const APPController = (function(UICtrl, APICtrl) {
             loadGenres();
         }
     }
-
 })(UIController, APIController);
 
 // Will need to call a method to load the genres on page load
