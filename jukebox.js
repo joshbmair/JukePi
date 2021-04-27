@@ -16,27 +16,6 @@ const APIController = (function() {
         const data = await result.json();
         return data.access_token;
     }
-
-    // Authorize scopes of player
-    const _authPlayer = async () => {
-        console.log('In authPlayer');
-        // TODO: Change below to 'http://localhost' on JukePi
-        // redirectUri = 'C:/Users/Josh/OneDrive/Documents/School/CS%20370/JukePi/index.html'
-
-        // Authorize reading playback state
-        // await fetch('https://accounts.spotify.com/authorize', {
-        //     method: 'GET',
-        //     headers: {
-        //         'client_id': clientId,
-        //         'response_type': 'code',
-        //         'redirect_uri': redirectUri,
-        //         'scope': 'user-read-playback-state'
-        //     }
-        // });
-
-        // Authorize modifying playback state
-        // TODO
-    }
     
     const _getGenres = async (token) => {
         const result = await fetch(`https://api.spotify.com/v1/browse/categories?locale=sv_US`, {
@@ -85,9 +64,6 @@ const APIController = (function() {
     return {
         getToken() {
             return _getToken();
-        },
-        authPlayer() {
-            return _authPlayer();
         },
         getGenres(token) {
             return _getGenres(token);
@@ -205,8 +181,6 @@ const AppController = (function(UICtrlr, APICtrlr) {
         const token = await APICtrlr.getToken();           
         // Store the token onto the page
         UICtrlr.storeToken(token);
-        // Authorize scopes for player
-        await APICtrlr.authPlayer();
         // Set the genres
         const genres = await APICtrlr.getGenres(token);
         // Populate our genres select element
