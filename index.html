@@ -2,12 +2,14 @@
 <body>
     <p>Loading JukePi...</p>
     <script>
-        const clientId    = '57be238cb1e64d2d83d34c1f7deb4f6c';
-        const scopes      = 'user-read-playback-state user-modify-playback-state'
+        const clientId = '57be238cb1e64d2d83d34c1f7deb4f6c';
+        const scopes = 'user-read-playback-state user-modify-playback-state'
         // TODO: Change below to 'http://localhost/jukebox.html'
-        const redirectUri = 'file:///C:/Users/Josh/OneDrive/Documents/School/CS%20370/JukePi/jukebox.html';
+        const redirectUri = 'http://localhost/jukebox.html';
+        // file:///C:/Users/Josh/OneDrive/Documents/School/CS%20370/JukePi/jukebox.html
 
-        window.location.replace('https://accounts.spotify.com/authorize' +
+        // window.location.replace
+        console.log('https://accounts.spotify.com/authorize' +
             '?response_type=code' +
             '&client_id=' + clientId +
             '&scope=' + encodeURIComponent(scopes) +

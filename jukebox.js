@@ -16,6 +16,15 @@ const APIController = (function() {
         const data = await result.json();
         return data.access_token;
     }
+
+    const _getDevices = async () => {
+        const result = await fetch('https://api.spotify.com/v1/me/player/devices', {
+            method: 'GET'
+        });
+
+        // const data = await result.json();
+        // console.log(data);
+    }
     
     const _getGenres = async (token) => {
         const result = await fetch(`https://api.spotify.com/v1/browse/categories?locale=sv_US`, {
@@ -64,6 +73,9 @@ const APIController = (function() {
     return {
         getToken() {
             return _getToken();
+        },
+        getDevices() {
+            return _getDevices();
         },
         getGenres(token) {
             return _getGenres(token);
@@ -181,6 +193,9 @@ const AppController = (function(UICtrlr, APICtrlr) {
         const token = await APICtrlr.getToken();           
         // Store the token onto the page
         UICtrlr.storeToken(token);
+        // Get devices
+        const devices = await APICtrlr.getDevices();
+        console.log(devices);
         // Set the genres
         const genres = await APICtrlr.getGenres(token);
         // Populate our genres select element
