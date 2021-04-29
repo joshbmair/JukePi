@@ -61,7 +61,7 @@ const APIController = (function() {
 
     // Gets Spotify playlists based on selected generes
     const _getPlaylist = async (token, genreId) => {
-        const limit = 10;
+        const limit = 6;
         
         const result = await fetch(`https://api.spotify.com/v1/browse/categories/${genreId}/playlists?limit=${limit}`, {
             method: 'GET',
@@ -176,10 +176,10 @@ const UIController = (function() {
                 <img src="${img}" alt="">        
             </div>
             <div class="row col-sm-12 px-0">
-                <label for="Genre" class="form-label col-sm-12">${title}:</label>
+                <label for="Genre" class="form-label col-sm-12">${title}</label>
             </div>
             <div class="row col-sm-12 px-0">
-                <label for="artist" class="form-label col-sm-12">By ${artist}:</label>
+                <label for="artist" class="form-label col-sm-12">by ${artist}</label>
             </div> 
             `;
 
