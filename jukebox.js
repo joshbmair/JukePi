@@ -5,7 +5,6 @@ const APIController = (function() {
     return {
         // Retrieves session token
         async getToken() {
-
             const result = await fetch('https://accounts.spotify.com/api/token', {
                 method: 'POST',
                 headers: {
@@ -18,7 +17,7 @@ const APIController = (function() {
             const data = await result.json();
             return data.access_token;
         },
-        async setDevice() {
+        async setDevice(token) {
             // Get devices info
             const result = await fetch('https://api.spotify.com/v1/me/player/devices', {
                 method: 'GET',
@@ -45,10 +44,11 @@ const APIController = (function() {
             });
         },
         // Gets the ID of the song currently playing
-        async getCurrentSongId() {
+        async getCurrentSongId(token) {
             const result = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
                 method: 'GET',
                 header: {
+                    'Authorization': 'Bearer ' + token,
                     'market': 'from_token'
                 }
             });
