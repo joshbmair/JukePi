@@ -5,6 +5,7 @@ const APIController = (function() {
     return {
         // Retrieves session token
         async getToken() {
+
             const result = await fetch('https://accounts.spotify.com/api/token', {
                 method: 'POST',
                 headers: {
