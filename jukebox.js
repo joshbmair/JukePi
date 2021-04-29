@@ -195,7 +195,7 @@ const UIController = (function() {
 
         // Create the song detail
         createTrackDetail(img, title, artist) {
-            const detailDiv = document.querySelector(DOMElements.divSongDetail);
+            const detailDiv = document.querySelector(DOMElements.selectGenre);
             // Any time user clicks a new song, we need to clear out the song detail div
             detailDiv.innerHTML = '';
 
