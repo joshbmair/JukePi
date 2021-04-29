@@ -34,6 +34,9 @@ const APIController = (function() {
         // Set playback to top playback device
         await fetch('https://api.spotify.com/v1/me/player', {
             method: 'PUT',
+            header: {
+                'Authorization': 'Bearer ' + token
+            },
             body: {
                 'device_ids': deviceId,
                 'play': true
@@ -161,7 +164,7 @@ const UIController = (function() {
         divSongDetail: '#song-detail',
         hfToken: '#hidden_token',
         divSonglist: '.song-list'
-    }
+    };
 
     // Public methods
     return {
@@ -307,9 +310,13 @@ const AppController = (function(UICtrlr, APICtrlr) {
         const trackId = e.target.id;
         // Get the track object
         const track = await APICtrlr.getTrack(token, trackId);
+        // await APICtrlr.queueSong(token, trackId);
         // Load the track details
+        // FIXME: Needs to be current song
         UICtrlr.createTrackDetail(track.album.images[2].url, track.name, track.artists[0].name);
-    });    
+    });
+
+    // TODO: Add updater when song changes
 
     return {
         init() {
