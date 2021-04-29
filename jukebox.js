@@ -57,12 +57,12 @@ const APIController = (function() {
             return data.id;
         },
         // Adds song to queue
-        async queueSong(token, id) {
+        async queueSong(token, trackId) {
             const result = await fetch('https://api.spotify.com/v1/me/player/queue', {
                 method: 'POST',
                 header: {
                     'Authorization': 'Bearer ' + token,
-                    'uri': 'spotify:track:' + id
+                    'uri': 'spotify:track:' + trackId
                 }
             });
         },
@@ -107,7 +107,7 @@ const APIController = (function() {
             return data.items;
         },
         // Retrieves information about the selected track
-        async getTrack(token, trackId) {
+        async getTrackInfo(token, trackId) {
             const result = await fetch(`${trackId}`, {
                 method: 'GET',
                 headers: {
@@ -121,8 +121,6 @@ const APIController = (function() {
     }
 })();
 
-
-// UI Module
 const UIController = (function() {
     // Object to hold references to HTML selectors
     const DOMElements = {
@@ -192,12 +190,12 @@ const UIController = (function() {
 
         resetTracks() {
             this.inputField().tracks.innerHTML = '';
-            this.resetTrackDetail();
+            this.resetTrackDetail(); // FIXME: Remove?
         },
 
         resetPlaylist() {
             this.inputField().playlist.innerHTML = '';
-            this.resetTracks();
+            this.resetTracks(); // FIXME: Remove?
         },
         
         storeToken(value) {
@@ -215,20 +213,43 @@ const UIController = (function() {
 const AppController = (function(UICtrlr, APICtrlr) {
     // Get input field object ref
     const DOMInputs = UICtrlr.inputField();
+    const currSong = '';
 
     // Get genres on page load
     const loadGenres = async () => {
-        // Get the token
+        // Get token
         const token = await APICtrlr.getToken();           
         // Store the token onto the page
         UICtrlr.storeToken(token);
         // Set device to top
-        APICtrlr.setDevice(token);
+        await APICtrlr.setDevice(token);
         // Get currently playing song
+        const trackId = await APICtrlr.getCurrentSongId(token);
+        const track = await APICtrlr.getTrackInfo(token, trackId);
+        // Show info of currently playing song
+        UICtrlr.createTrackDetail(track.album.images[2].url, track.name, track.artists[0].name);
+        currSong = track.name;
         // Set the genres
         const genres = await APICtrlr.getGenres(token);
         // Populate our genres select element
         genres.forEach(element => UICtrlr.createGenre(element.name, element.id));
+    }
+
+    const pingSongEnd = async () => {
+        // Get token
+        const token = await APICtrlr.getToken();
+        while (true) {
+            // Wait 5 seconds to check if song is over
+            await delay(5000);
+            // Track ID
+            const trackId = await APICtrlr.getCurrentSongId(token);
+            const track = await APICtrlr.getTrackInfo(token, trackId);
+            // TODO: Finish
+            if (track.album.artist.id != currSong) {
+                // Change info to currently playing song
+                UICtrlr.createTrackDetail(track.album.images[1].url, track.name, track.artists[0].name); 
+            }
+        }
     }
 
     // Create genre change event listener
@@ -246,7 +267,6 @@ const AppController = (function(UICtrlr, APICtrlr) {
         // Create a playlist item for every playlist returned
         playlist.forEach(p => UICtrlr.createPlaylist(p.name, p.tracks.href));
     });
-     
 
     // Create submit button click event listener
     DOMInputs.submit.addEventListener('click', async (e) => {
@@ -277,19 +297,17 @@ const AppController = (function(UICtrlr, APICtrlr) {
         // Get the track endpoint
         const trackId = e.target.id;
         // Get the track object
-        const track = await APICtrlr.getTrack(token, trackId);
-        // await APICtrlr.queueSong(token, trackId);
+        const track = await APICtrlr.getTrackInfo(token, trackId);
+        await APICtrlr.queueSong(token, trackId);
         // Load the track details
-        // FIXME: Needs to be current song
-        UICtrlr.createTrackDetail(track.album.images[2].url, track.name, track.artists[0].name);
+        // UICtrlr.createTrackDetail(track.album.images[2].url, track.name, track.artists[0].name);
     });
-
-    // TODO: Add updater when song changes
 
     return {
         init() {
             console.log('Starting JukePi');
             loadGenres();
+            pingSongEnd();
         }
     }
 })(UIController, APIController);
