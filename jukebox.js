@@ -222,11 +222,14 @@ const AppController = (function(UICtrlr, APICtrlr) {
         // Store the token onto the page
         UICtrlr.storeToken(token);
         // Set device to top
+        console.log('Setting device');
         await APICtrlr.setDevice(token);
         // Get currently playing song
+        console.log('Getting current song');
         const trackId = await APICtrlr.getCurrentSongId(token);
         const track = await APICtrlr.getTrackInfo(token, trackId);
         // Show info of currently playing song
+        console.log('Creating track detail');
         UICtrlr.createTrackDetail(track.album.images[1].url, track.name, track.artists[0].name);
         currSong = track.name;
         // Set the genres
@@ -242,8 +245,8 @@ const AppController = (function(UICtrlr, APICtrlr) {
             setTimeout(async () => {
                 const trackId = await APICtrlr.getCurrentSongId(token);
                 const track = await APICtrlr.getTrackInfo(token, trackId);
-                // TODO: Finish
                 if (track.album.artist.id != currSong) {
+                    console.log('Song eneded, resetting track detail');
                     // Change info to currently playing song
                     UICtrlr.resetTrackDetail();
                     UICtrlr.createTrackDetail(track.album.images[1].url, track.name, track.artists[0].name); 
@@ -308,7 +311,8 @@ const AppController = (function(UICtrlr, APICtrlr) {
         init() {
             console.log('Starting JukePi');
             loadGenres();
-            // pingSongEnd();
+            console.log('Done with loading genres, pinging song end');
+            pingSongEnd();
         }
     }
 })(UIController, APIController);
