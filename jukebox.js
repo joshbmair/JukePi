@@ -239,18 +239,17 @@ const AppController = (function(UICtrlr, APICtrlr) {
         // Get token
         const token = await APICtrlr.getToken();
         while (true) {
-            // Wait 5 seconds to check if song is over
-            await delay(5000);
-            // Track ID
-            const trackId = await APICtrlr.getCurrentSongId(token);
-            const track = await APICtrlr.getTrackInfo(token, trackId);
-            // TODO: Finish
-            if (track.album.artist.id != currSong) {
-                // Change info to currently playing song
-                UICtrlr.resetTrackDetail();
-                currSong = track.name;
-                UICtrlr.createTrackDetail(track.album.images[1].url, track.name, track.artists[0].name); 
-            }
+            setTimeout(() => {
+                const trackId = await APICtrlr.getCurrentSongId(token);
+                const track = await APICtrlr.getTrackInfo(token, trackId);
+                // TODO: Finish
+                if (track.album.artist.id != currSong) {
+                    // Change info to currently playing song
+                    UICtrlr.resetTrackDetail();
+                    currSong = track.name;
+                    UICtrlr.createTrackDetail(track.album.images[1].url, track.name, track.artists[0].name); 
+                }                
+            }, 5000);
         }
     }
 
