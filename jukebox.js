@@ -310,7 +310,7 @@ const AppController = (function(UICtrlr, APICtrlr) {
     });
 
     return {
-        init() {
+        async init() {
             console.log('Starting JukePi');
             await loadGenres();
             console.log('Done with loading genres, pinging song end');
