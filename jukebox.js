@@ -239,7 +239,7 @@ const AppController = (function(UICtrlr, APICtrlr) {
         // Get token
         const token = await APICtrlr.getToken();
         while (true) {
-            setTimeout(() => {
+            setTimeout(async () => {
                 const trackId = await APICtrlr.getCurrentSongId(token);
                 const track = await APICtrlr.getTrackInfo(token, trackId);
                 // TODO: Finish
