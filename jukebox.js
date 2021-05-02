@@ -164,7 +164,7 @@ const UIController = (function() {
 
         // Create the song detail
         createTrackDetail(img, title, artist) {
-            const detailDiv = document.querySelector(DOMElements.selectGenre);
+            const detailDiv = document.querySelector(DOMElements.divSongDetail);
             // Any time user clicks a new song, we need to clear out the song detail div
             detailDiv.innerHTML = '';
 
@@ -190,12 +190,12 @@ const UIController = (function() {
 
         resetTracks() {
             this.inputField().tracks.innerHTML = '';
-            this.resetTrackDetail(); // FIXME: Remove?
+            this.resetTrackDetail();
         },
 
         resetPlaylist() {
             this.inputField().playlist.innerHTML = '';
-            this.resetTracks(); // FIXME: Remove?
+            this.resetTracks();
         },
         
         storeToken(value) {
@@ -247,6 +247,8 @@ const AppController = (function(UICtrlr, APICtrlr) {
             // TODO: Finish
             if (track.album.artist.id != currSong) {
                 // Change info to currently playing song
+                UICtrlr.resetTrackDetail();
+                currSong = track.name;
                 UICtrlr.createTrackDetail(track.album.images[1].url, track.name, track.artists[0].name); 
             }
         }
