@@ -19,6 +19,7 @@ const APIController = (function() {
         },
         async setDevice(token) {
             // Get devices info
+            console.log('Getting device info');
             const result = await fetch('https://api.spotify.com/v1/me/player/devices', {
                 method: 'GET',
                 header: {
@@ -32,6 +33,7 @@ const APIController = (function() {
             deviceId = data.devices[0].id;
 
             // Set playback to top playback device
+            console.log('Setting playback to top device');
             await fetch('https://api.spotify.com/v1/me/player', {
                 method: 'PUT',
                 header: {
@@ -310,7 +312,7 @@ const AppController = (function(UICtrlr, APICtrlr) {
     return {
         init() {
             console.log('Starting JukePi');
-            loadGenres();
+            await loadGenres();
             console.log('Done with loading genres, pinging song end');
             pingSongEnd();
         }
