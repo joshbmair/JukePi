@@ -227,7 +227,7 @@ const AppController = (function(UICtrlr, APICtrlr) {
         const trackId = await APICtrlr.getCurrentSongId(token);
         const track = await APICtrlr.getTrackInfo(token, trackId);
         // Show info of currently playing song
-        UICtrlr.createTrackDetail(track.album.images[2].url, track.name, track.artists[0].name);
+        UICtrlr.createTrackDetail(track.album.images[1].url, track.name, track.artists[0].name);
         currSong = track.name;
         // Set the genres
         const genres = await APICtrlr.getGenres(token);
@@ -246,8 +246,8 @@ const AppController = (function(UICtrlr, APICtrlr) {
                 if (track.album.artist.id != currSong) {
                     // Change info to currently playing song
                     UICtrlr.resetTrackDetail();
-                    currSong = track.name;
                     UICtrlr.createTrackDetail(track.album.images[1].url, track.name, track.artists[0].name); 
+                    currSong = track.name;
                 }                
             }, 5000);
         }
@@ -308,7 +308,7 @@ const AppController = (function(UICtrlr, APICtrlr) {
         init() {
             console.log('Starting JukePi');
             loadGenres();
-            pingSongEnd();
+            // pingSongEnd();
         }
     }
 })(UIController, APIController);
