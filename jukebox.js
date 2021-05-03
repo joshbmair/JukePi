@@ -5,7 +5,7 @@ const APIController = (function() {
     return {
         // Retrieves session token
         async getToken() {
-            console.log('Session token');
+            console.log('Retrieving session token');
             const result = await fetch('https://accounts.spotify.com/api/token', {
                 method: 'POST',
                 headers: {
@@ -16,10 +16,12 @@ const APIController = (function() {
             });
     
             const data = await result.json();
+
+            console.log('Session token: ' + data.access_token);
             return data.access_token;
         },
         async setDevice(token) {
-            console.log('TEST -- setDevice: token=' + token);
+            console.log('setDevice\'s token: ' + token);
             // Get devices info
             console.log('Getting device info');
             const result = await fetch('https://api.spotify.com/v1/me/player/devices', {
@@ -247,6 +249,7 @@ const AppController = (function(UICtrlr, APICtrlr) {
     const pingSongEnd = async () => {
         // Get token
         const token = UICtrlr.getStoredToken().token;
+        console.log('Retrieved stored token, waiting for next song...')
         while (true) {
             setTimeout(async () => {
                 const trackId = await APICtrlr.getCurrentSongId(token);
