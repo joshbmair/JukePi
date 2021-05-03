@@ -5,6 +5,7 @@ const APIController = (function() {
     return {
         // Retrieves session token
         async getToken() {
+            console.log('Session token');
             const result = await fetch('https://accounts.spotify.com/api/token', {
                 method: 'POST',
                 headers: {
@@ -245,13 +246,13 @@ const AppController = (function(UICtrlr, APICtrlr) {
 
     const pingSongEnd = async () => {
         // Get token
-        const token = await APICtrlr.getToken();
+        const token = UICtrlr.getStoredToken().token;
         while (true) {
             setTimeout(async () => {
                 const trackId = await APICtrlr.getCurrentSongId(token);
                 const track = await APICtrlr.getTrackInfo(token, trackId);
                 if (track.album.artist.id != currSong) {
-                    console.log('Song eneded, resetting track detail');
+                    console.log('Song ended, resetting track detail');
                     // Change info to currently playing song
                     UICtrlr.resetTrackDetail();
                     UICtrlr.createTrackDetail(track.album.images[1].url, track.name, track.artists[0].name); 
