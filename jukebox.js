@@ -241,6 +241,7 @@ const AppController = (function(UICtrlr, APICtrlr) {
         const genres = await APICtrlr.getGenres(token);
         // Populate our genres select element
         genres.forEach(element => UICtrlr.createGenre(element.name, element.id));
+        // console.log('Done with loading genres, pinging song end');
         // pingSongEnd(token);
     }
 
@@ -313,8 +314,6 @@ const AppController = (function(UICtrlr, APICtrlr) {
         async init() {
             console.log('Starting JukePi');
             loadGenres();
-            console.log('Done with loading genres, pinging song end');
-            pingSongEnd();
         }
     }
 })(UIController, APIController);
