@@ -226,6 +226,10 @@ const AppController = (function(UICtrlr, APICtrlr) {
         const token = await APICtrlr.getToken();           
         // Store the token onto the page
         UICtrlr.storeToken(token);
+        // Set the genres
+        const genres = await APICtrlr.getGenres(token);
+        // Populate our genres select element
+        genres.forEach(element => UICtrlr.createGenre(element.name, element.id));
         // Set device to top
         console.log('Setting device');
         await APICtrlr.setDevice(token);
@@ -237,10 +241,6 @@ const AppController = (function(UICtrlr, APICtrlr) {
         console.log('Creating track detail');
         UICtrlr.createTrackDetail(track.album.images[1].url, track.name, track.artists[0].name);
         currSong = track.name;
-        // Set the genres
-        const genres = await APICtrlr.getGenres(token);
-        // Populate our genres select element
-        genres.forEach(element => UICtrlr.createGenre(element.name, element.id));
         // console.log('Done with loading genres, pinging song end');
         // pingSongEnd(token);
     }
