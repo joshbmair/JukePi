@@ -16,12 +16,9 @@ const APIController = (function() {
             });
     
             const data = await result.json();
-
-            console.log('Session token: ' + data.access_token);
             return data.access_token;
         },
         async setDevice(token) {
-            console.log('setDevice\'s token: ' + token);
             // Get devices info
             console.log('Getting device info');
             const result = await fetch('https://api.spotify.com/v1/me/player/devices', {
@@ -244,12 +241,11 @@ const AppController = (function(UICtrlr, APICtrlr) {
         const genres = await APICtrlr.getGenres(token);
         // Populate our genres select element
         genres.forEach(element => UICtrlr.createGenre(element.name, element.id));
+        pingSongEnd(token);
     }
 
-    const pingSongEnd = async () => {
+    const pingSongEnd = async (token) => {
         // Get token
-        const token = await UICtrlr.getStoredToken().token;
-        console.log('Retrieved stored token, waiting for next song...')
         while (true) {
             setTimeout(async () => {
                 const trackId = await APICtrlr.getCurrentSongId(token);
@@ -316,7 +312,7 @@ const AppController = (function(UICtrlr, APICtrlr) {
     return {
         async init() {
             console.log('Starting JukePi');
-            await loadGenres();
+            loadGenres();
             console.log('Done with loading genres, pinging song end');
             pingSongEnd();
         }
