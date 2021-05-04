@@ -44,7 +44,7 @@ const APIController = (function() {
                     'Authorization': 'Bearer ' + token
                 },
                 body: {
-                    'device_ids': deviceId,
+                    'device_ids': [deviceId],
                     'play': true
                 }
             });
@@ -248,7 +248,7 @@ const AppController = (function(UICtrlr, APICtrlr) {
 
     const pingSongEnd = async () => {
         // Get token
-        const token = UICtrlr.getStoredToken().token;
+        const token = await UICtrlr.getStoredToken().token;
         console.log('Retrieved stored token, waiting for next song...')
         while (true) {
             setTimeout(async () => {
