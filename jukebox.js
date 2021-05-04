@@ -249,7 +249,7 @@ const AppController = (function(UICtrlr, APICtrlr) {
         // Populate our genres select element
         genres.forEach(element => UICtrlr.createGenre(element.name, element.id));
         // Retrieve access token for viewing/modifying user data
-        const accessToken = await APICtrlr.getToken();
+        const accessToken = await APICtrlr.getAccessToken();
         // Set device to top
         console.log('Setting device');
         await APICtrlr.setDevice(accessToken);
