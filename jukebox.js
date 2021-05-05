@@ -32,7 +32,7 @@ const APIController = (function() {
                 body: {
                     'grant_type': '"authorization_code"',
                     'code': code,
-                    'redirect_uri': encodeURIComponent('http://localhost/jukebox.html')
+                    'redirect_uri': 'http://localhost/jukebox.html'
                 }
             });
 
