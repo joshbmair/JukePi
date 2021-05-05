@@ -30,7 +30,7 @@ const APIController = (function() {
                     'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)
                 },
                 body: {
-                    'grant_type': '"authorization_code"',
+                    'grant_type': 'authorization_code',
                     'code': code,
                     'redirect_uri': 'http://localhost/jukebox.html'
                 }
