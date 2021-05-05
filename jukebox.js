@@ -21,7 +21,7 @@ const APIController = (function() {
         // Retrieves access token for viewing/modifying user data
         async getAccessToken() {
             const url = new URL(window.location.href);
-            const code = url.searchParams(code);
+            const code = url.searchParams('code');
 
             const result = await fetch('https://accounts.spotify.com/api/token', {
                 method: 'POST',
